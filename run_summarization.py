@@ -467,13 +467,13 @@ def main():
                 with open(output_prediction_file, "w") as writer:
                     writer.write("\n".join(predictions))
 
-    kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "summarization"}
-    kwargs["dataset_names"] = "ViMs"
+    # kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "summarization"}
+    # kwargs["dataset_names"] = "ViMs"
 
-    if training_args.push_to_hub:
-        trainer.push_to_hub(**kwargs)
-    else:
-        trainer.create_model_card(**kwargs)
+    # if training_args.push_to_hub:
+    #     trainer.push_to_hub(**kwargs)
+    # else:
+    #     trainer.create_model_card(**kwargs)
 
     return results
 
