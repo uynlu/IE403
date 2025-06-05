@@ -421,10 +421,7 @@ def main():
         trainer.save_model()
 
         metrics = train_result.metrics
-        max_train_samples = (
-            data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
-        )
-        metrics["train_samples"] = min(max_train_samples, len(train_dataset))
+        metrics["train_samples"] = len(train_dataset)
 
         trainer.log_metrics("train", metrics)
         trainer.save_metrics("train", metrics)
@@ -441,8 +438,8 @@ def main():
                 metrics.update(dataset_metrics)
         else:
             metrics = trainer.evaluate(metric_key_prefix="eval")
-        max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
-        metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
+
+        metrics["eval_samples"] = len(eval_dataset)
 
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
@@ -452,10 +449,8 @@ def main():
 
         predict_results = trainer.predict(predict_dataset, metric_key_prefix="predict")
         metrics = predict_results.metrics
-        max_predict_samples = (
-            data_args.max_predict_samples if data_args.max_predict_samples is not None else len(predict_dataset)
-        )
-        metrics["predict_samples"] = min(max_predict_samples, len(predict_dataset))
+        
+        metrics["predict_samples"] = len(predict_dataset)
 
         trainer.log_metrics("predict", metrics)
         trainer.save_metrics("predict", metrics)
@@ -485,3 +480,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# python run_summarization.py --model_name_or_path vinai/bartpho-syllable-base --text_column text -- summary --train_file dataset/official/train.json --validation_file dataset/official/validation.json --test_file dataset/official/test.json --output_dir /tmp/tst-summarization  --per_device_train_batch_size=4 --per_device_eval_batch_size=4 --predict_with_generate
