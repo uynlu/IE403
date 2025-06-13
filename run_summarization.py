@@ -448,7 +448,7 @@ def main():
                 } for pred, summary in zip(predictions, summaries)]
                 output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
                 with open(output_prediction_file, "w") as writer:
-                    writer.write("\n".join(inferences))
+                    writer.write(inferences)
 
     return results
 
