@@ -439,7 +439,9 @@ def main():
                 predictions = tokenizer.batch_decode(
                     predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
                 )
-                summaries = predict_dataset["summary"]
+                summaries = tokenizer.batch_decode(
+                    predict_dataset["labels"], skip_special_tokens=True, clean_up_tokenization_spaces=True
+                )
                 inferences = [{
                     "prediction": pred.strip(),
                     "actual summary": summary.strip()
