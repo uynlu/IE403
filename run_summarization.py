@@ -1,22 +1,3 @@
-#!/usr/bin/env python
-# Copyright 2021 The HuggingFace Team. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-Fine-tuning the library models for sequence to sequence.
-"""
-# You can also adapt this script on your own sequence to sequence task. Pointers for this are left as comments.
-
 import logging
 import os
 import sys
@@ -25,7 +6,7 @@ from typing import Optional
 
 import datasets
 import evaluate
-import nltk  # Here to have a nice missing dependency error message early on
+import nltk
 import numpy as np
 from datasets import load_dataset
 from filelock import FileLock
@@ -37,10 +18,6 @@ from transformers import (
     AutoTokenizer,
     DataCollatorForSeq2Seq,
     HfArgumentParser,
-    # MBart50Tokenizer,
-    # MBart50TokenizerFast,
-    # MBartTokenizer,
-    # MBartTokenizerFast,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     set_seed,
@@ -462,18 +439,14 @@ def main():
                 predictions = tokenizer.batch_decode(
                     predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
                 )
-                predictions = [pred.strip() for pred in predictions]
+                summaries = predict_dataset["summary"]
+                inferences = [{
+                    "prediction": pred.strip(),
+                    "actual summary": summary.strip()
+                } for pred, summary in zip(predictions, summaries)]
                 output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
                 with open(output_prediction_file, "w") as writer:
-                    writer.write("\n".join(predictions))
-
-    # kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "summarization"}
-    # kwargs["dataset_names"] = "ViMs"
-
-    # if training_args.push_to_hub:
-    #     trainer.push_to_hub(**kwargs)
-    # else:
-    #     trainer.create_model_card(**kwargs)
+                    writer.write("\n".join(inferences))
 
     return results
 
@@ -482,4 +455,4 @@ if __name__ == "__main__":
     main()
 
 
-# python run_summarization.py --model_name_or_path vinai/bartpho-syllable-base --text_column text -- summary --train_file dataset/official/train.json --validation_file dataset/official/validation.json --test_file dataset/official/test.json --output_dir /tmp/tst-summarization  --per_device_train_batch_size=4 --per_device_eval_batch_size=4 --predict_with_generate
+# python run_summarization.py --model_name_or_path vinai/bartpho-syllable-base --text_column text --summary_column summary --train_file dataset/official/train.json --validation_file dataset/official/validation.json --test_file dataset/official/test.json --output_dir /pretrained_models --do_train --do_eval --do_predict --num_train_epochs 10  --per_device_train_batch_size 4 --per_device_eval_batch_size 4 --predict_with_generate
