@@ -3,6 +3,7 @@ import os
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
+import json
 
 import datasets
 import evaluate
@@ -447,8 +448,8 @@ def main():
                     "actual summary": summary.strip()
                 } for pred, summary in zip(predictions, summaries)]
                 output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
-                with open(output_prediction_file, "w") as writer:
-                    writer.write(inferences)
+                with open(output_prediction_file, "w") as file:
+                    json.dump(inferences, file, ensure_ascii=False, indent=4)
 
     return results
 
